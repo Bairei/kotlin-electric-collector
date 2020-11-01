@@ -1,0 +1,28 @@
+version: '3'
+
+volumes:
+  mongo-storage:
+  gradle-cache:
+
+services:
+  my-app:
+    build:
+      context: .
+    depends_on:
+      - mongodb
+    env_file:
+      - docker.env
+    ports:
+      - 8080:8080
+    volumes:
+      - gradle-cache:/home/gradle/.gradle
+
+  mongodb:
+    image: 'mongo:4.2'
+    ports:
+      - 27017:27017
+    env_file:
+      - docker.env
+    volumes:
+      - mongo-storage:/data/db
+      - ./docker/mongo:/docker-entrypoint-initdb.d
