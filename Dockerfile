@@ -7,7 +7,7 @@ COPY src src
 COPY build.gradle.kts .
 COPY settings.gradle.kts .
 
-RUN gradle assemble --no-daemon
+RUN gradle assemble --no-daemon --info
 
 # jar extractor
 FROM openjdk:11-jdk as extractor

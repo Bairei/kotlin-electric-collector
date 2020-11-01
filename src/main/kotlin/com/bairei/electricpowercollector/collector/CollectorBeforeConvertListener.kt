@@ -4,12 +4,13 @@ import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventLis
 import org.springframework.data.mongodb.core.mapping.event.BeforeConvertEvent
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
+import java.util.Objects.isNull
 
 @Component
 class CollectorBeforeConvertListener : AbstractMongoEventListener<CollectorEntity>() {
 
     override fun onBeforeConvert(event: BeforeConvertEvent<CollectorEntity>) {
-        if (event.source.createdAt == null) {
+        if (isNull(event.source.createdAt)) {
             event.source.createdAt = LocalDateTime.now()
         }
     }
