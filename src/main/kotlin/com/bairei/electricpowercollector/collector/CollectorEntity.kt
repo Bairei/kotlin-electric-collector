@@ -10,7 +10,7 @@ import java.util.*
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Document(collection = "collector")
-class CollectorEntity(
+data class CollectorEntity(
         val businessId: UUID = UUID.randomUUID(),
         var readingDate: LocalDateTime,
         var collectorReading: Int,
