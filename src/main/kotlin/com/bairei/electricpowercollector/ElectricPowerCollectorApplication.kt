@@ -11,7 +11,8 @@ import org.springframework.context.annotation.Bean
 class ElectricPowerCollectorApplication
 
 @Bean
-fun objectMapper() = ObjectMapper().registerModule(JavaTimeModule()).disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+fun objectMapper() =
+    ObjectMapper().registerModule(JavaTimeModule()).disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
 
 fun main(args: Array<String>) {
     runApplication<ElectricPowerCollectorApplication>(*args)
