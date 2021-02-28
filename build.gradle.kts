@@ -1,11 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
     id("org.springframework.boot") version "2.3.5.RELEASE"
     id("io.spring.dependency-management") version "1.0.10.RELEASE"
-    kotlin("jvm") version "1.4.10"
-    kotlin("plugin.spring") version "1.4.10"
-    id("org.jlleitschuh.gradle.ktlint") version "9.4.1"
+    kotlin("jvm") version "1.4.30"
+    kotlin("plugin.spring") version "1.4.30"
+    id("org.jlleitschuh.gradle.ktlint") version "10.0.0"
 }
 
 group = "com.bairei"
@@ -53,15 +54,17 @@ dependencyManagement {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    dependsOn(tasks.named("ktlintCheck"))
 }
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
         jvmTarget = "11"
+        useIR = true
     }
 }
 
-tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
+tasks.getByName<BootJar>("bootJar") {
     layered()
 }
