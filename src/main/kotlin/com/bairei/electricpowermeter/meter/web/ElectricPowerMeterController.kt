@@ -1,13 +1,13 @@
-package com.bairei.electricpowercollector.collector.web
+package com.bairei.electricpowermeter.meter.web
 
-import com.bairei.electricpowercollector.collector.CollectorEntity
-import com.bairei.electricpowercollector.collector.CollectorRepository
-import com.bairei.electricpowercollector.collector.dto.CollectorEntryDto
-import com.bairei.electricpowercollector.collector.dto.CreateCollectorEntryCommand
-import com.bairei.electricpowercollector.collector.dto.DisplayConsumptionEntry
-import com.bairei.electricpowercollector.collector.dto.DisplayMeasurementStatistics
-import com.bairei.electricpowercollector.collector.dto.DisplayRechargeEntry
-import com.bairei.electricpowercollector.csv.CsvMeasurementExtractor
+import com.bairei.electricpowermeter.meter.MeterEntity
+import com.bairei.electricpowermeter.meter.MeterRepository
+import com.bairei.electricpowermeter.meter.dto.MeterEntryDto
+import com.bairei.electricpowermeter.meter.dto.CreateMeterEntryCommand
+import com.bairei.electricpowermeter.meter.dto.DisplayConsumptionEntry
+import com.bairei.electricpowermeter.meter.dto.DisplayMeasurementStatistics
+import com.bairei.electricpowermeter.meter.dto.DisplayRechargeEntry
+import com.bairei.electricpowermeter.csv.CsvMeasurementExtractor
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
@@ -23,23 +23,23 @@ import javax.validation.constraints.Min
 
 @RestController
 @RequestMapping(value = ["/collector"], produces = [APPLICATION_JSON_VALUE])
-class ElectricPowerCollectorController(
-    val collectorRepository: CollectorRepository,
+class ElectricPowerMeterController(
+    val meterRepository: MeterRepository,
     val csvMeasurementExtractor: CsvMeasurementExtractor
 ) {
 
-    val log: Logger = LoggerFactory.getLogger(ElectricPowerCollectorController::class.java)
+    val log: Logger = LoggerFactory.getLogger(ElectricPowerMeterController::class.java)
 
     @GetMapping("/list")
-    fun listAll(): Flux<CollectorEntryDto> {
-        return collectorRepository.findAll().map { toResponse(it) }
+    fun listAll(): Flux<MeterEntryDto> {
+        return meterRepository.findAll().map { toResponse(it) }
     }
 
     @PostMapping
-    fun create(@RequestBody command: CreateCollectorEntryCommand): Mono<CollectorEntryDto> {
+    fun create(@RequestBody command: CreateMeterEntryCommand): Mono<MeterEntryDto> {
         log.info("Received request: {}", command)
-        return collectorRepository.save(
-            CollectorEntity(
+        return meterRepository.save(
+            MeterEntity(
                 readingDate = command.readingAt,
                 collectorReading = command.reading
             )
@@ -50,16 +50,16 @@ class ElectricPowerCollectorController(
     fun listReadingsBetween(
         @RequestParam(required = false) @Min(0) readingFrom: Int?,
         @RequestParam(required = false) readingTo: Int?
-    ): Flux<CollectorEntryDto> {
+    ): Flux<MeterEntryDto> {
         log.info("Received request for listing readings from between {} and {}", readingFrom, readingTo)
-        return collectorRepository.findByReadingBetween(readingFrom ?: 0, readingTo ?: Int.MAX_VALUE)
+        return meterRepository.findByReadingBetween(readingFrom ?: 0, readingTo ?: Int.MAX_VALUE)
             .map { toResponse(it) }
     }
 
     @GetMapping("/stat")
     fun displayMeasurementStatistics(): Mono<DisplayMeasurementStatistics> {
         log.info("Received request for displaying measurement statistics")
-        return collectorRepository.findAll().collectList().map { toMeasurementStatistics(it) }
+        return meterRepository.findAll().collectList().map { toMeasurementStatistics(it) }
     }
 
     @PostMapping("/csv")
@@ -68,19 +68,19 @@ class ElectricPowerCollectorController(
         csvMeasurementExtractor.executeExtraction()
     }
 
-    private fun toResponse(entity: CollectorEntity): CollectorEntryDto =
-        CollectorEntryDto(
+    private fun toResponse(entity: MeterEntity): MeterEntryDto =
+        MeterEntryDto(
             businessId = entity.businessId,
             createdAt = entity.createdAt,
             readingDate = entity.readingDate,
             reading = entity.collectorReading
         )
 
-    private fun toMeasurementStatistics(collectorEntityList: List<CollectorEntity>): DisplayMeasurementStatistics {
+    private fun toMeasurementStatistics(meterEntityList: List<MeterEntity>): DisplayMeasurementStatistics {
         val powerConsumptionValues = ArrayList<Int>()
         val consumptions = ArrayList<DisplayConsumptionEntry>()
         val recharges = ArrayList<DisplayRechargeEntry>()
-        val sortedList = collectorEntityList.sortedWith(Comparator.comparing(CollectorEntity::readingDate))
+        val sortedList = meterEntityList.sortedWith(Comparator.comparing(MeterEntity::readingDate))
         sortedList.reduce { first, second ->
             if (first.collectorReading > second.collectorReading) {
                 val powerConsumption = first.collectorReading - second.collectorReading
@@ -110,7 +110,7 @@ class ElectricPowerCollectorController(
         return DisplayMeasurementStatistics(
             averagePowerConsumption = averageConsumption,
             biggestPowerConsumption = maximumConsumption ?: 0,
-            measurements = collectorEntityList.map { toResponse(it) },
+            measurements = meterEntityList.map { toResponse(it) },
             consumptions = consumptions,
             recharges = recharges
         )

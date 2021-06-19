@@ -1,4 +1,4 @@
-package com.bairei.electricpowercollector.csv
+package com.bairei.electricpowermeter.csv
 
 import com.opencsv.bean.CsvBindByPosition
 

@@ -1,1 +1,1 @@
-rootProject.name = "electric-power-collector"
+rootProject.name = "electric-power-meter"

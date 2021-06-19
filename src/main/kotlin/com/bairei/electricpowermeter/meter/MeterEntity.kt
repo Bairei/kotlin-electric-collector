@@ -1,4 +1,4 @@
-package com.bairei.electricpowercollector.collector
+package com.bairei.electricpowermeter.meter
 
 import lombok.Builder
 import lombok.EqualsAndHashCode
@@ -10,7 +10,7 @@ import java.util.UUID
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Document(collection = "collector")
-data class CollectorEntity(
+data class MeterEntity(
     val businessId: UUID = UUID.randomUUID(),
     var readingDate: LocalDateTime,
     var collectorReading: Int,

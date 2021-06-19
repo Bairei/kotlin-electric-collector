@@ -1,4 +1,4 @@
-package com.bairei.electricpowercollector.collector
+package com.bairei.electricpowermeter.meter
 
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener
 import org.springframework.data.mongodb.core.mapping.event.BeforeConvertEvent
@@ -7,9 +7,9 @@ import java.time.LocalDateTime
 import java.util.Objects.isNull
 
 @Component
-class CollectorBeforeConvertListener : AbstractMongoEventListener<CollectorEntity>() {
+class MeterBeforeConvertListener : AbstractMongoEventListener<MeterEntity>() {
 
-    override fun onBeforeConvert(event: BeforeConvertEvent<CollectorEntity>) {
+    override fun onBeforeConvert(event: BeforeConvertEvent<MeterEntity>) {
         if (isNull(event.source.createdAt)) {
             event.source.createdAt = LocalDateTime.now()
         }

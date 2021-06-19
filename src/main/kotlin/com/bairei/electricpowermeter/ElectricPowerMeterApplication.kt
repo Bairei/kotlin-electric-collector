@@ -1,4 +1,4 @@
-package com.bairei.electricpowercollector
+package com.bairei.electricpowermeter
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -8,12 +8,12 @@ import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
 
 @SpringBootApplication
-class ElectricPowerCollectorApplication
+class ElectricPowerMeterApplication
 
 @Bean
 fun objectMapper() =
     ObjectMapper().registerModule(JavaTimeModule()).disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
 
 fun main(args: Array<String>) {
-    runApplication<ElectricPowerCollectorApplication>(*args)
+    runApplication<ElectricPowerMeterApplication>(*args)
 }

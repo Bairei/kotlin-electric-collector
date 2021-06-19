@@ -1,4 +1,4 @@
-package com.bairei.electricpowercollector.collector.dto
+package com.bairei.electricpowermeter.meter.dto
 
 import java.time.LocalDate
 

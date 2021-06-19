@@ -1,4 +1,4 @@
-package com.bairei.electricpowercollector.config
+package com.bairei.electricpowermeter.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -12,7 +12,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
 @EnableSwagger2
 class SwaggerConfig {
     @Bean
-    fun docket() = Docket(DocumentationType.SWAGGER_2)
+    fun docket(): Docket = Docket(DocumentationType.SWAGGER_2)
         .select().apis(RequestHandlerSelectors.any())
         .paths(PathSelectors.any())
         .build()

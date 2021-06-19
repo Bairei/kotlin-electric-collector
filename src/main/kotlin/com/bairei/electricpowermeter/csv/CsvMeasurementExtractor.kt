@@ -1,7 +1,7 @@
-package com.bairei.electricpowercollector.csv
+package com.bairei.electricpowermeter.csv
 
-import com.bairei.electricpowercollector.collector.CollectorEntity
-import com.bairei.electricpowercollector.collector.CollectorRepository
+import com.bairei.electricpowermeter.meter.MeterEntity
+import com.bairei.electricpowermeter.meter.MeterRepository
 import com.opencsv.bean.CsvToBeanBuilder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -16,7 +16,7 @@ import java.util.regex.Pattern
 
 @Component
 @Transactional
-class CsvMeasurementExtractor(val collectorRepository: CollectorRepository) {
+class CsvMeasurementExtractor(val meterRepository: MeterRepository) {
     private val log: Logger = LoggerFactory.getLogger(CsvMeasurementExtractor::class.java)
 
     fun executeExtraction() {
@@ -26,7 +26,7 @@ class CsvMeasurementExtractor(val collectorRepository: CollectorRepository) {
                 val entriesFromCsv = CsvToBeanBuilder<CsvMeasurementEntry>(csvFile.reader()).withSeparator(' ')
                     .withType(CsvMeasurementEntry::class.java).build().parse().map { toCollectorEntity(it) }
                 log.info("Mapped entries: {}", entriesFromCsv)
-                collectorRepository.saveAll(entriesFromCsv).doOnNext { log.info("Entity saved: {}", it) }.subscribe()
+                meterRepository.saveAll(entriesFromCsv).doOnNext { log.info("Entity saved: {}", it) }.subscribe()
             } else {
                 log.warn("No csv file detected, skipping extraction!")
             }
@@ -35,7 +35,7 @@ class CsvMeasurementExtractor(val collectorRepository: CollectorRepository) {
         }
     }
 
-    private fun toCollectorEntity(csvEntry: CsvMeasurementEntry): CollectorEntity {
+    private fun toCollectorEntity(csvEntry: CsvMeasurementEntry): MeterEntity {
         val measurementValue =
             BigDecimal(csvEntry.measurementValue.replace(',', '.'), MathContext.DECIMAL64).multiply(BigDecimal.TEN)
                 .intValueExact()
@@ -50,7 +50,7 @@ class CsvMeasurementExtractor(val collectorRepository: CollectorRepository) {
             measurementHour.toInt(),
             measurementMinutes.toInt()
         )
-        return CollectorEntity(readingDate = measurementDate, collectorReading = measurementValue)
+        return MeterEntity(readingDate = measurementDate, collectorReading = measurementValue)
     }
 
     companion object {
