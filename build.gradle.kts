@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
     id("org.springframework.boot") version "2.5.0"
@@ -7,6 +6,7 @@ plugins {
     kotlin("jvm") version "1.5.10"
     kotlin("plugin.spring") version "1.5.10"
     id("org.jlleitschuh.gradle.ktlint") version "10.0.0"
+    groovy
 }
 
 group = "com.bairei"
@@ -36,14 +36,16 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     implementation("io.springfox:springfox-boot-starter:3.0.0")
     implementation("com.opencsv:opencsv:5.3")
+    implementation("org.codehaus.groovy:groovy-all:3.0.9")
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
     testImplementation("io.projectreactor:reactor-test")
-    testImplementation("org.testcontainers:junit-jupiter")
+    testImplementation("org.testcontainers:spock")
     testImplementation("org.testcontainers:mongodb")
+    testImplementation("org.spockframework:spock-spring:2.0-groovy-3.0")
 }
 
 dependencyManagement {
@@ -52,7 +54,7 @@ dependencyManagement {
     }
 }
 
-tasks.withType<Test> {
+tasks.test {
     useJUnitPlatform()
     dependsOn(tasks.named("ktlintCheck"))
 }
@@ -61,10 +63,5 @@ tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
         jvmTarget = "11"
-        useIR = true
     }
-}
-
-tasks.getByName<BootJar>("bootJar") {
-    layered()
 }
