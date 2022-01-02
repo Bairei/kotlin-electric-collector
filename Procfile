@@ -1,1 +1,1 @@
-web: java -jar build/libs/electric-power-meter-0.0.1-SNAPSHOT.jar
+web: java $JAVA_OPTS -Dserver.port=$PORT -jar build/libs/electric-power-meter-0.0.1-SNAPSHOT.jar
